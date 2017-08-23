@@ -1,0 +1,27 @@
+{
+    "name": "ametsuramet/humblee-framework",
+    "description": "Humblee Framework",
+    "type": "library",
+    "require": {
+        "php": ">=5.6.4",
+        "slim/pdo": "dev-master",
+        "symfony/http-foundation": "3.4.x-dev",
+        "pug-php/pug": "dev-master",
+        "firebase/php-jwt": "dev-master",
+        "fig/http-message-util": "^1.1@dev"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Amet\\Humblee\\": "src"
+        }
+    },
+    "authors": [
+        {
+            "name": "amet suramet",
+            "email": "ametsuramet@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev"
+}
+

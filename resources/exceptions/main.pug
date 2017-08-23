@@ -1,0 +1,18 @@
+html(lang='en')
+  head
+    block head
+      meta(charset='utf-8')
+      block title
+      link(href='//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css', rel='stylesheet')
+      link(href='https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet', rel='stylesheet')
+      link(href='/css/app.css', rel='stylesheet')
+      link(href='/css/exception.css', rel='stylesheet')
+
+  body
+    block scripts
+    block body
+    	section(class="container")
+      	block content
+    //if IE 6
+      h3.bad Shit, your browser too old. Please update it.
+    br

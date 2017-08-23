@@ -1,0 +1,18 @@
+extends main
+block title
+	title Humblee Exception
+block content
+	div
+		img(src="/logo.jpg", class="logo")
+		h3= message
+		each t in traces
+			p(class="list-stack")
+				div(class="line-number") 
+					span(class="label label-danger")= t.line 
+				span(class="file")= t.file 
+				div(class="trace")
+					ul
+						li Function: #{t.function}
+						li Class:  #{t.class}
+						li Type:  #{t.type}
+						li Args:  #{t.args}
