@@ -11,7 +11,8 @@
         "fig/http-message-util": "^1.1@dev",
         "illuminate/hashing": "^5.5@dev",
         "aura/session": "3.x-dev",
-        "directus/migrations": "dev-master"
+        "directus/migrations": "dev-master",
+        "vlucas/phpdotenv": "^2.4@dev"
 
     },
     "license": "MIT",
