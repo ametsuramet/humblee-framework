@@ -1,6 +1,6 @@
 <?php
 
-namespace Amet\Humblee\Providers\RouteProviders;
+namespace Amet\Humblee\Providers\RouterProviders;
 
 use Fig\Http\Message\RequestMethodInterface;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Amet\Humblee\Providers\RouteProviders;
+namespace Amet\Humblee\Providers\RouterProviders;
 
 use Exception;
 use Fig\Http\Message\RequestMethodInterface;
