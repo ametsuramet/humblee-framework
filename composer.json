@@ -9,7 +9,8 @@
         "pug-php/pug": "dev-master",
         "firebase/php-jwt": "dev-master",
         "fig/http-message-util": "^1.1@dev",
-        "illuminate/hashing": "^5.5@dev"
+        "illuminate/hashing": "^5.5@dev",
+        "aura/session": "3.x-dev"
     },
     "license": "MIT",
     "autoload": {
@@ -25,4 +26,3 @@
     ],
     "minimum-stability": "dev"
 }
-
