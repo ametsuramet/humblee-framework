@@ -13,7 +13,25 @@ class Authentication {
         $this->baseModel = $value;
     }
 
+    public function Attempt(array $credential) {
+        global $config;
+
+        $user = $this->processAttempt($credential);
+        $token = JWTFactory::generateToken($user[$this->defaultId]);
+        $session_factory = new \Aura\Session\SessionFactory;
+        $session = $session_factory->newInstance($_COOKIE);
+        $segment = $session->getSegment('Amet\Humblee');  
+        $segment->set('auth_token',$token);
+        header('Location: '.url().$config['app']["redirect"]);
+    }
+
     public function ApiAttempt(array $credential) {
+        $user = $this->processAttempt($credential);
+        return JWTFactory::generateToken($user[$this->defaultId]);
+    }
+
+    private function processAttempt($credential)
+    {
         if (!in_array($this->idColumn, array_keys($credential))) {
             throw new \Exception($this->idColumn." key not exist");
         }
@@ -26,14 +44,15 @@ class Authentication {
         //check user exists
         $user = $user->where([$this->idColumn,"=",$credential[$this->idColumn]])->first();
         if (!$user) {
-            throw new \Exception("User with ".$this->secretColumn.": ".$credential[$this->idColumn]." not exist");
+            throw new \Exception("User with ".$this->idColumn.": ".$credential[$this->idColumn]." not exist");
         }
 
         $hash = new Bcrypt;
         if (!$hash->check($credential[$this->secretColumn],$user[$this->secretColumn])) {
             throw new \Exception($this->secretColumn." not matched");
         }
-        return JWTFactory::generateToken($user[$this->defaultId]);
+
+        return $user;
     }
 
 	
