@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Middlewares;
+namespace Amet\Humblee\Bases;
 
 class BaseMiddleware {
 

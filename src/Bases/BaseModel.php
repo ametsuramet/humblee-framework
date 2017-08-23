@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace Amet\Humblee\Bases;
 
 class BaseModel
 {
