@@ -8,7 +8,8 @@
         "symfony/http-foundation": "3.4.x-dev",
         "pug-php/pug": "dev-master",
         "firebase/php-jwt": "dev-master",
-        "fig/http-message-util": "^1.1@dev"
+        "fig/http-message-util": "^1.1@dev",
+        "illuminate/hashing": "^5.5@dev"
     },
     "license": "MIT",
     "autoload": {
