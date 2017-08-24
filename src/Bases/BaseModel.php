@@ -305,14 +305,15 @@ class BaseModel
         $from = ($currentPage - 1) * $limit + 1;
         $to = $currentPage == $last_page ? (($currentPage - 1) * $limit)+($sum_data%$limit) : $currentPage * $limit;
         $offset = ($currentPage - 1) * $limit;
+        // print_r(request()->server);
         $data_pagination = [
             'total' => $sum_data,
             "per_page" => $limit,
             "offset" => $offset,
             "current_page" => (int) $currentPage,
             "last_page" => $last_page,
-            "next_page_url" => $currentPage == $last_page ? null : url()."?page=".$next_page,
-            "prev_page_url" => $currentPage == 1 ? null : url()."?page=".$prev_page,
+            "next_page_url" => $currentPage == $last_page ? null : url().request()->server->get('PATH_INFO')."?page=".$next_page,
+            "prev_page_url" => $currentPage == 1 ? null : url().request()->server->get('PATH_INFO')."?page=".$prev_page,
             "from" => $from,
             "to" => $to,
         ];
