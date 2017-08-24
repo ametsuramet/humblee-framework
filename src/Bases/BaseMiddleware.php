@@ -14,12 +14,14 @@ class BaseMiddleware {
         foreach ($methods as $key => $method) {
             if ($method->name != "__construct" && $method->class == $class_name) {
                 foreach ($this->routerParams as $key => $routerParams) {
+                    if ($routerParams['uri'] == "*") {
+                        call_user_func(array($this, 'handle'));
+                    } else
                 	if ($routerParams['method'] == request()->server->get('REQUEST_METHOD') && 
                 		$routerParams['uri'] == request()->server->get('PATH_INFO')) {
                 		call_user_func(array($this, 'handle'));
-                    }
+                    } else
                     if (preg_match_all('/:([\w-%]+)/', $routerParams['uri'], $keys)) {
-                        // print_r('@^' .$routerParams['uri'] . '/?$@i');
                         $keys = current($keys);
                         $merge = implode("/",$keys);
                         $prefix = str_replace($merge, "", $routerParams['uri']);
@@ -31,6 +33,8 @@ class BaseMiddleware {
                         if (preg_match($pattern, request()->server->get('PATH_INFO'))) {
                             call_user_func(array($this, 'handle'));
                         }
+                    } else {
+                        
                     }
                 }
             }
