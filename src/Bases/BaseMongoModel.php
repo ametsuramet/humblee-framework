@@ -6,6 +6,8 @@ class BaseMongoModel
 {
 	protected $database = "";
 	protected $collection = "";
+    protected $show_column = [];
+
 	private $showID = true;
 
 	function __construct()
@@ -39,6 +41,15 @@ class BaseMongoModel
 
     }
 
+
+    public function set_show_column($values = [])
+    {
+    	foreach ($values as $key => $value) {
+        	$this->show_column[$value] = 1;
+    	}
+        return $this;
+    }
+
     public function createIndex($array_index,$options = [])
     {
     	return $this->collection()->createIndex($array_index,$options);
@@ -52,6 +63,10 @@ class BaseMongoModel
 
     public function find($params = [], $options = [])
     {
+    	if (count($this->show_column)) {
+    		$show_column = [];
+    		$options['projection'] = $this->show_column;
+    	}
         return $this->query($params,$options);
     }
 
