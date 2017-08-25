@@ -14,7 +14,8 @@
         "directus/migrations": "dev-master",
         "vlucas/phpdotenv": "^2.4@dev",
         "mongodb/mongodb": "^1.2@dev",
-        "monolog/monolog": "^2.0@dev"
+        "monolog/monolog": "^2.0@dev",
+        "bramus/monolog-colored-line-formatter": "~2.0"
 
     },
     "license": "MIT",
