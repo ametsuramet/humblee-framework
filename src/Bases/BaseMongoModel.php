@@ -6,6 +6,7 @@ class BaseMongoModel
 {
 	protected $database = "";
 	protected $collection = "";
+	private $showID = true;
 
 	function __construct()
     {
@@ -28,6 +29,21 @@ class BaseMongoModel
         return $this;
     }
 
+    public function createCollection($name,$collation)
+    {
+    	$database = mongo()->{$this->database};
+    	$database->createCollection($name, [
+		    'collation' => $collation,
+		]);
+
+
+    }
+
+    public function createIndex($array_index,$options = [])
+    {
+    	return $this->collection()->createIndex($array_index,$options);
+    }
+
     private function collection()
     {
     	$db = mongo()->{$this->database}->{$this->collection};
@@ -36,10 +52,72 @@ class BaseMongoModel
 
     public function find($params = [], $options = [])
     {
-        return $this->collection()->find($params, $options);
+        return $this->query($params,$options);
     }
 
-   
+    private function query($params = [], $options = [])
+    {
+    	$collection = $this->collection()->find($params, $options);
+    	$data = [];
+		foreach ($collection as $key => $document) {
+			if (!$this->showID) {
+				unset($document['_id']);
+			}
+		    $data[] =  $document;
+		}
+
+        return $data;
+    }
+
+   	public function replaceOne($params,$value)
+   	{
+   		$updateResult = $this->collection()->replaceOne(
+		    $params,
+		    $value
+		);
+
+		return [
+			"Matched" => $updateResult->getMatchedCount(),
+			"Modified" => $updateResult->getModifiedCount()
+		];
+   	}
+   	public function updateOne($params,$value)
+   	{
+   		$updateResult = $this->collection()->updateOne(
+		    $params,
+		    ['$set' => $value]
+		);
+
+		return [
+			"Matched" => $updateResult->getMatchedCount(),
+			"Modified" => $updateResult->getModifiedCount()
+		];
+   	}
+
+   	public function updateMany($params,$value)
+   	{
+   		$updateResult = $this->collection()->updateMany(
+		    $params,
+		    ['$set' => $value]
+		);
+
+		return [
+			"Matched" => $updateResult->getMatchedCount(),
+			"Modified" => $updateResult->getModifiedCount()
+		];
+   	}
+
+    public function deleteOne($params)
+    {
+    	$deleteResult = $this->collection()->deleteOne($params);
+        return ["Deleted" => $deleteResult->getDeletedCount()];
+    }
+    
+    public function deleteMany($params)
+    {
+    	$deleteResult = $this->collection()->deleteMany($params);
+        return ["Deleted" => $deleteResult->getDeletedCount()];
+    }
 
     public function insertOne($params)
     {
@@ -51,5 +129,10 @@ class BaseMongoModel
     {
     	$insertManyResult = $this->collection()->insertMany($params);
         return $insertManyResult->getInsertedIds();
+    }
+
+    public function setShowId($value)
+    {
+    	$this->showID = $value;
     }
 }

@@ -256,7 +256,7 @@ class BaseModel
         }
 
         if (count($this->limit_attributes)) {
-            $db = $db->imit($this->limit_attributes[1],$this->limit_attributes[0]);
+            $db = $db->limit($this->limit_attributes[1],$this->limit_attributes[0]);
         }
 
         if ($this->value_default_key) {
@@ -377,6 +377,7 @@ class BaseModel
 
     public function first()
     {
+        $this->limit(1);
         $this->execute();
         return current($this->data);
     }
