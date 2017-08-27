@@ -9,10 +9,10 @@ class BaseConsole {
 	function __construct()
     {
     	$this->arguments = func_get_args()[0];
-    	
 
-    	if (in_array("--help", $this->arguments )) {
+    	if ( isset($this->arguments["h"]) or isset($this->arguments["help"])) {
     		$this->info($this->description);
+            exit(0);
     	}
 
     	call_user_func(array($this, 'boot'));
