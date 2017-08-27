@@ -7,6 +7,7 @@ class BaseMongoModel
 	protected $database = "";
 	protected $collection = "";
     protected $show_column = [];
+    protected $fillable = [];
     private $hasMany_attributes = [];
     private $hasOne_attributes = [];
     private $manyToMany_attributes = [];
@@ -21,7 +22,7 @@ class BaseMongoModel
     	// }
 
     	global $config;
-		$db_config = $config['mongo']['db'][$config['app']['APP_ENV']];
+		$db_config = $config['mongo']['db'][env("MONGO_CONNECTION","development")];
 
     	$this->database = $db_config['database'];
         $class_name = get_class($this);
@@ -164,6 +165,7 @@ class BaseMongoModel
 
    	public function replaceOne($params,$value)
    	{
+        $params = $this->checkFillable($params);
    		$updateResult = $this->collection()->replaceOne(
 		    $params,
 		    $value
@@ -176,6 +178,7 @@ class BaseMongoModel
    	}
    	public function updateOne($params,$value)
    	{
+        $params = $this->checkFillable($params);
    		$updateResult = $this->collection()->updateOne(
 		    $params,
 		    ['$set' => $value]
@@ -189,6 +192,7 @@ class BaseMongoModel
 
    	public function updateMany($params,$value)
    	{
+        $params = $this->checkFillable($params);
    		$updateResult = $this->collection()->updateMany(
 		    $params,
 		    ['$set' => $value]
@@ -214,12 +218,14 @@ class BaseMongoModel
 
     public function insertOne($params)
     {
+        $params = $this->checkFillable($params);
     	$insertOneResult = $this->collection()->insertOne($params);
         return $insertOneResult->getInsertedId();
     }
 
     public function insertMany($params)
     {
+        $params = $this->checkFillable($params);
     	$insertManyResult = $this->collection()->insertMany($params);
         return $insertManyResult->getInsertedIds();
     }
@@ -227,5 +233,18 @@ class BaseMongoModel
     public function setShowId($value)
     {
     	$this->showID = $value;
+    }
+
+    private function checkFillable($params) {
+        if (count($this->fillable)) {
+            if (isset($params[0])) {
+                foreach ($params as $key => &$param) {
+                    $param = array_intersect_key($param,array_flip($this->fillable));
+                }
+            } else {
+                $params = array_intersect_key($params,array_flip($this->fillable));
+            }
+        }
+        return $params;
     }
 }
