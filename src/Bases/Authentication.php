@@ -17,11 +17,20 @@ class Authentication {
         $this->mode = $value;
     }
 
+    public function setDefaultId($value) {
+        $this->defaultId = $value;
+    }
+
     public function Attempt(array $credential) {
         global $config;
 
         $user = $this->processAttempt($credential);
-        $token = JWTFactory::generateToken($user[$this->defaultId]);
+        
+        if ($this->mode == "mongo" && $this->defaultId == "_id") {
+            $token = JWTFactory::generateToken((string) new \MongoDB\BSON\ObjectID($user[$this->defaultId]));
+        } else {
+            $token = JWTFactory::generateToken($user[$this->defaultId]);
+        }
         $session_factory = new \Aura\Session\SessionFactory;
         $session = $session_factory->newInstance($_COOKIE);
         $segment = $session->getSegment('Amet\Humblee');  
@@ -31,7 +40,12 @@ class Authentication {
 
     public function ApiAttempt(array $credential) {
         $user = $this->processAttempt($credential);
+        if ($this->mode == "mongo" && $this->defaultId == "_id") {
+            return JWTFactory::generateToken((string) new \MongoDB\BSON\ObjectID($user[$this->defaultId]));
+        } 
+        
         return JWTFactory::generateToken($user[$this->defaultId]);
+        
     }
 
     private function processAttempt($credential)
