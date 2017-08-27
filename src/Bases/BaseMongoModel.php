@@ -239,10 +239,20 @@ class BaseMongoModel
         if (count($this->fillable)) {
             if (isset($params[0])) {
                 foreach ($params as $key => &$param) {
-                    $param = array_intersect_key($param,array_flip($this->fillable));
+                    $flip = array_flip($this->fillable);
+                    $intersect = array_intersect_key($param,$flip );
+                    foreach ($flip  as $key => &$f) {
+                        $f = isset($intersect[$key]) ? $intersect[$key] : NULL;
+                    }
+                    $param = $flip;
                 }
             } else {
-                $params = array_intersect_key($params,array_flip($this->fillable));
+                $flip = array_flip($this->fillable);
+                $intersect = array_intersect_key($params,$flip );
+                foreach ($flip  as $key => &$f) {
+                    $f = isset($intersect[$key]) ? $intersect[$key] : NULL;
+                }
+                $params = $flip;
             }
         }
         return $params;
