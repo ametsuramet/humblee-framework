@@ -4,13 +4,17 @@ namespace Amet\Humblee\Bases;
 use Illuminate\Hashing\BcryptHasher as Bcrypt;
 class Authentication {
     protected $baseModel = "\App\Models\User";
+    protected $mode = "db";
     protected $defaultId = "id";
     protected $idColumn = "email";
     protected $secretColumn = "password";
 
 
-    public function setModel($value) {
+    public function setBaseModel($value) {
         $this->baseModel = $value;
+    }
+    public function setMode($value) {
+        $this->mode = $value;
     }
 
     public function Attempt(array $credential) {
@@ -42,7 +46,13 @@ class Authentication {
 
         $user = new $this->baseModel();
         //check user exists
-        $user = $user->where([$this->idColumn,"=",$credential[$this->idColumn]])->first();
+        if ($this->mode == "db") {
+            $user = $user->where([$this->idColumn,"=",$credential[$this->idColumn]])->first();
+        }
+        
+        if ($this->mode == "mongo") {
+            $user = $user->findOne([$this->idColumn => $credential[$this->idColumn]]);
+        }
         if (!$user) {
             throw new \Exception("User with ".$this->idColumn.": ".$credential[$this->idColumn]." not exist");
         }
@@ -55,5 +65,5 @@ class Authentication {
         return $user;
     }
 
-	
+    
 }
