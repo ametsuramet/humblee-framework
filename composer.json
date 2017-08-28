@@ -17,7 +17,8 @@
         "monolog/monolog": "^2.0@dev",
         "bramus/monolog-colored-line-formatter": "~2.0",
         "swiftmailer/swiftmailer": "^6.0",
-        "pmeth/php_repl": "dev-master"
+        "pmeth/php_repl": "dev-master",
+        "positivezero/rest": "dev-master"
 
     },
     "license": "MIT",
