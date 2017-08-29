@@ -8,6 +8,7 @@ class Authentication {
     protected $defaultId = "id";
     protected $idColumn = "email";
     protected $secretColumn = "password";
+    protected $show_column = [];
 
 
     public function setBaseModel($value) {
@@ -21,9 +22,9 @@ class Authentication {
         $this->defaultId = $value;
     }
 
-    public function Attempt(array $credential) {
+    public function Attempt(array $credential,$show_column = []) {
         global $config;
-
+        $this->show_column = $show_column;
         $user = $this->processAttempt($credential);
         
         if ($this->mode == "mongo" && $this->defaultId == "_id") {
@@ -38,14 +39,19 @@ class Authentication {
         header('Location: '.url().$config['app']["redirect"]);
     }
 
-    public function ApiAttempt(array $credential) {
+    public function ApiAttempt(array $credential,$show_column = []) {
+        $this->show_column = $show_column;
         $user = $this->processAttempt($credential);
         if ($this->mode == "mongo" && $this->defaultId == "_id") {
-            return JWTFactory::generateToken((string) new \MongoDB\BSON\ObjectID($user[$this->defaultId]));
+            $token = JWTFactory::generateToken((string) new \MongoDB\BSON\ObjectID($user[$this->defaultId]));
+            $user['token'] = $token;
+            unset($user['password']);
+            return $user;
         } 
-        
-        return JWTFactory::generateToken($user[$this->defaultId]);
-        
+        $token = JWTFactory::generateToken($user[$this->defaultId]);
+        $user['token'] = $token;
+        unset($user['password']);
+        return $user;
     }
 
     private function processAttempt($credential)
@@ -61,11 +67,17 @@ class Authentication {
         $user = new $this->baseModel();
         //check user exists
         if ($this->mode == "db") {
-            $user = $user->where([$this->idColumn,"=",$credential[$this->idColumn]])->first();
+            if (count($this->show_column)) {
+                $user = $user->set_show_column($this->show_column);
+            }
+            $user = $user->set_show_relation(false)->where([$this->idColumn,"=",$credential[$this->idColumn]])->first();
         }
         
         if ($this->mode == "mongo") {
-            $user = $user->findOne([$this->idColumn => $credential[$this->idColumn]]);
+            if (count($this->show_column)) {
+                $user = $user->set_show_column($this->show_column);
+            }
+            $user = $user->set_show_relation(false)->findOne([$this->idColumn => $credential[$this->idColumn]]);
         }
         if (!$user) {
             throw new \Exception("User with ".$this->idColumn.": ".$credential[$this->idColumn]." not exist");
