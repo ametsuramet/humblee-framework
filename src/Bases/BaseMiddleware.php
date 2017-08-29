@@ -4,9 +4,9 @@ namespace Amet\Humblee\Bases;
 
 class BaseMiddleware {
 
-	protected $routerParams = [];
+    protected $routerParams = [];
 
-	function __construct()
+    function __construct()
     {
         $class_name = get_class($this);
         $class   = new \ReflectionClass($class_name);
@@ -15,11 +15,13 @@ class BaseMiddleware {
             if ($method->name != "__construct" && $method->class == $class_name) {
                 foreach ($this->routerParams as $key => $routerParams) {
                     if ($routerParams['uri'] == "*") {
+                        $GLOBALS['middleware_class'] = $class_name;
                         call_user_func(array($this, 'handle'));
                     } else
-                	if ($routerParams['method'] == request()->server->get('REQUEST_METHOD') && 
-                		$routerParams['uri'] == request()->server->get('PATH_INFO')) {
-                		call_user_func(array($this, 'handle'));
+                    if ($routerParams['method'] == request()->server->get('REQUEST_METHOD') && 
+                        $routerParams['uri'] == request()->server->get('PATH_INFO')) {
+                        $GLOBALS['middleware_class'] = $class_name;
+                        call_user_func(array($this, 'handle'));
                     } else
                     if (preg_match_all('/:([\w-%]+)/', $routerParams['uri'], $keys)) {
                         $keys = current($keys);
@@ -31,6 +33,7 @@ class BaseMiddleware {
                         }
                         $pattern = "/\\".implode("\/", $pattern)."/";
                         if (preg_match($pattern, request()->server->get('PATH_INFO'))) {
+                            $GLOBALS['middleware_class'] = $class_name;
                             call_user_func(array($this, 'handle'));
                         }
                     } else {
