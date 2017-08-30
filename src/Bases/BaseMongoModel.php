@@ -278,7 +278,6 @@ class BaseMongoModel
     }
     public function updateOne($params,$value)
     {
-        $params = $this->checkFillable($params);
         $updateResult = $this->collection()->updateOne(
             $params,
             ['$set' => $value]
@@ -292,7 +291,6 @@ class BaseMongoModel
 
     public function updateMany($params,$value)
     {
-        $params = $this->checkFillable($params);
         $updateResult = $this->collection()->updateMany(
             $params,
             ['$set' => $value]

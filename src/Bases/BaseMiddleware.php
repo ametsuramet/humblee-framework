@@ -27,11 +27,12 @@ class BaseMiddleware {
                         $keys = current($keys);
                         $merge = implode("/",$keys);
                         $prefix = str_replace($merge, "", $routerParams['uri']);
-                        $pattern = [rtrim($prefix,'/')];
+                        $pattern = explode("/",rtrim($prefix,'/'));
                         foreach ($keys as $key) {
                             $pattern[] = "(.+)";
                         }
-                        $pattern = "/\\".implode("\/", $pattern)."/";
+                        unset($pattern[0]);
+                        $pattern = "/\\/".implode("\/", $pattern)."/";
                         if (preg_match($pattern, request()->server->get('PATH_INFO'))) {
                             $GLOBALS['middleware_class'] = $class_name;
                             call_user_func(array($this, 'handle'));
