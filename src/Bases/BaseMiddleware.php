@@ -19,7 +19,7 @@ class BaseMiddleware {
         foreach ($methods as $key => $method) {
             $simple_class_name = str_replace("App\Middlewares\\", "", $class_name);
             if ($method->name != "__construct" && $method->class == $class_name) {
-                if (!count($this->routerParams) && $simple_class_name=="AuthApiClientMiddleware") {
+                if (!count($this->routerParams)) {
                     foreach ($routes as $key => $route) {
                         if(isset($route['middleware'])) {
                             if (in_array($simple_class_name, $route['middleware'])) {
