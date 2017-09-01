@@ -24,7 +24,7 @@ class BaseMiddleware {
                         if(isset($route['middleware'])) {
                             if (in_array($simple_class_name, $route['middleware'])) {
                                 if ($route['methods'] == request()->server->get('REQUEST_METHOD') && 
-                                    $route['url'] == request()->server->get('PATH_INFO')) {
+                                    ($route['url'] == request()->server->get('PATH_INFO') || $route['url'] == request()->server->get('REDIRECT_URL'))) {
                                     $GLOBALS['middleware_class'] = $class_name;
                                     call_user_func(array($this, 'handle'));
                                     // echo $route['url']."=>".$route['methods']."=>".PHP_EOL;
@@ -56,7 +56,7 @@ class BaseMiddleware {
                         call_user_func(array($this, 'handle'));
                     } else
                     if ($routerParams['method'] == request()->server->get('REQUEST_METHOD') && 
-                        $routerParams['uri'] == request()->server->get('PATH_INFO')) {
+                        ($routerParams['uri'] == request()->server->get('PATH_INFO') || $routerParams['uri'] == request()->server->get('REDIRECT_URL'))) {
                         $GLOBALS['middleware_class'] = $class_name;
                         call_user_func(array($this, 'handle'));
                     } else
