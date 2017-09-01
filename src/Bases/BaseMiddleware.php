@@ -38,7 +38,10 @@ class BaseMiddleware {
                                     $merge = implode("/",$keys);
                                     $pattern = rtrim($uri,'/');
                                     $pattern = "/".str_replace("/","\/", $pattern)."$/";
-                                    if (preg_match($pattern, request()->server->get('PATH_INFO'))) {
+                                    if (
+                                        preg_match($pattern, request()->server->get('PATH_INFO')) ||
+                                        preg_match($pattern, request()->server->get('REDIRECT_URL')) 
+                                        ) {
                                         $GLOBALS['middleware_class'] = $class_name;
                                         call_user_func(array($this, 'handle'));
                                     }
@@ -69,7 +72,10 @@ class BaseMiddleware {
                         $merge = implode("/",$keys);
                         $pattern = rtrim($uri,'/');
                         $pattern = "/".str_replace("/","\/", $pattern)."$/";
-                        if (preg_match($pattern, request()->server->get('PATH_INFO'))) {
+                        if (
+                            preg_match($pattern, request()->server->get('PATH_INFO')) ||
+                            preg_match($pattern, request()->server->get('REDIRECT_URL')) 
+                            ) {
                             $GLOBALS['middleware_class'] = $class_name;
                             call_user_func(array($this, 'handle'));
                         }
