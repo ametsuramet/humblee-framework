@@ -195,7 +195,9 @@ class BaseMongoModel
                                 if ($attribute[2] == "_id") {
                                     $d_raw[$attribute[2]] = (string) new ObjectID($d_raw[$attribute[2]]);
                                 }
-                                $db = $db->find([$attribute[1]=>$d_raw[$attribute[2]]]);
+                                $find = [$attribute[1]=>$d_raw[$attribute[2]]];
+                                $find = array_merge($find,$attribute[6]);
+                                $db = $db->find($find);
                                 $data[$j][$relation_attribute['name']] = $db;
                             }
                         }
@@ -212,7 +214,9 @@ class BaseMongoModel
                                 if ($attribute[2] == "_id") {
                                     $d_raw[$attribute[2]] = (string) new ObjectID($d_raw[$attribute[2]]);
                                 }
-                                $db = $db->findOne([$attribute[1]=>$d_raw[$attribute[2]]]);
+                                $find = [$attribute[1]=>$d_raw[$attribute[2]]];
+                                $find = array_merge($find,$attribute[6]);
+                                $db = $db->findOne($find);
                                 $data[$j][$relation_attribute['name']] = $db;
                             }
                         }
@@ -225,8 +229,9 @@ class BaseMongoModel
                                 if ($attribute[2] == "_id") {
                                     $d_raw[$attribute[2]] = (string) new ObjectID($d_raw[$attribute[2]]);
                                 }
-
-                                $pivots = (new $attribute[5][0])->find([$attribute[5][1] => $d_raw[$attribute[1]]]);
+                                $find = [$attribute[5][1] => $d_raw[$attribute[1]]];
+                                $find = array_merge($find,$attribute[7]);
+                                $pivots = (new $attribute[5][0])->find($find);
 
 
                                 if ($attribute[1] == "_id") {
@@ -333,31 +338,31 @@ class BaseMongoModel
         $this->showID = $value;
     }
 
-    protected function manyToMany($table,$column,$parent_column,$relation_name = null, $pivot_table,$show_column = [])
+    protected function manyToMany($table,$column,$parent_column,$relation_name = null, $pivot_table,$show_column = [],$where = [])
     {
         if ($this->show_relation) {
             if (!$relation_name) {
                 $relation_name = $table;
             }
             $table_alias = $table.'_'.$relation_name;
-            $this->relation_attributes[$relation_name] = ['name' => $relation_name, 'type' => 'many_to_many', 'alias' => $table_alias, 'pivot_table' => $pivot_table, 'show_column' => $show_column];
-            $this->manyToMany_attributes[$relation_name] = [$table,$column,$parent_column,$relation_name,$table_alias,$pivot_table,$show_column];
+            $this->relation_attributes[$relation_name] = ['name' => $relation_name, 'type' => 'many_to_many', 'alias' => $table_alias, 'pivot_table' => $pivot_table, 'show_column' => $show_column, 'where' => $where];
+            $this->manyToMany_attributes[$relation_name] = [$table,$column,$parent_column,$relation_name,$table_alias,$pivot_table,$show_column,$where];
         }
     }
 
-    protected function hasMany($table,$column,$parent_column,$relation_name = null,$show_column = [])
+    protected function hasMany($table,$column,$parent_column,$relation_name = null,$show_column = [],$where = [])
     {
         if ($this->show_relation) {
             if (!$relation_name) {
                 $relation_name = $table;
             }
             $table_alias = $table.'_'.$relation_name;
-            $this->relation_attributes[$relation_name] = ['name' => $relation_name, 'type' => 'many', 'alias' => $table_alias, 'show_column' => $show_column];
-            $this->hasMany_attributes[$relation_name] = [$table,$column,$parent_column,$relation_name,$table_alias,$show_column];
+            $this->relation_attributes[$relation_name] = ['name' => $relation_name, 'type' => 'many', 'alias' => $table_alias, 'show_column' => $show_column, 'where' => $where];
+            $this->hasMany_attributes[$relation_name] = [$table,$column,$parent_column,$relation_name,$table_alias,$show_column,$where];
         }
     }
 
-    protected function hasOne($table,$column,$parent_column,$relation_name = null,$show_column = [])
+    protected function hasOne($table,$column,$parent_column,$relation_name = null,$show_column = [],$where = [])
     {
         if ($this->show_relation) {
             if (!$relation_name) {
@@ -366,8 +371,8 @@ class BaseMongoModel
 
             $table_alias = $table.'_'.$relation_name;
 
-            $this->relation_attributes[$relation_name] = ['name' => $relation_name, 'type' => 'one', 'alias' => $table_alias, 'show_column' => $show_column];
-            $this->hasOne_attributes[$relation_name] = [$table,$column,$parent_column,$relation_name,$table_alias,$show_column];
+            $this->relation_attributes[$relation_name] = ['name' => $relation_name, 'type' => 'one', 'alias' => $table_alias, 'show_column' => $show_column, 'where' => $where];
+            $this->hasOne_attributes[$relation_name] = [$table,$column,$parent_column,$relation_name,$table_alias,$show_column,$where];
         }
     }
 
