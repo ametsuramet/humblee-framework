@@ -229,9 +229,8 @@ class BaseMongoModel
                                 if ($attribute[2] == "_id") {
                                     $d_raw[$attribute[2]] = (string) new ObjectID($d_raw[$attribute[2]]);
                                 }
-                                $find = [$attribute[5][1] => $d_raw[$attribute[1]]];
-                                $find = array_merge($find,$attribute[7]);
-                                $pivots = (new $attribute[5][0])->find($find);
+                                
+                                $pivots = (new $attribute[5][0])->find([$attribute[5][1] => $d_raw[$attribute[1]]]);
 
 
                                 if ($attribute[1] == "_id") {
@@ -244,7 +243,9 @@ class BaseMongoModel
                                     if (count($attribute[6])) {
                                         $get_data = $get_data->set_show_column($attribute[6]);
                                     }
-                                    $get_data = $get_data->findOne([$attribute[2] => $pivot[$attribute[5][2]]]);
+                                    $find = [$attribute[2] => $pivot[$attribute[5][2]]];
+                                    $find = array_merge($find,$attribute[7]);
+                                    $get_data = $get_data->findOne($find);
                                     $db[] = $get_data;
                                 }
                                 // print_r($attribute);
