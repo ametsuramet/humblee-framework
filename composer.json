@@ -6,7 +6,7 @@
         "php": ">=5.6.4",
         "slim/pdo": "dev-master",
         "symfony/http-foundation": "3.4.x-dev",
-        "pug-php/pug": "dev-master",
+        "pug-php/pug": "^2.7",
         "firebase/php-jwt": "dev-master",
         "fig/http-message-util": "^1.1@dev",
         "illuminate/hashing": "^5.5@dev",
